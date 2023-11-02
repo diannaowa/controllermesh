@@ -111,21 +111,22 @@ func (is *InternalSpec) GetObjectSelector(gr schema.GroupResource) (sel *metav1.
 }
 
 func (is *InternalSpec) GetMatchedSubsetEndpoint(ns string, gr schema.GroupResource) (ignore bool, self bool, hosts []string) {
-	subset, ok := is.routeInternal.determineNamespaceSubset(ns, gr)
-	if !ok {
-		return true, false, nil
-	}
-	if subset == AllSubsetPublic || subset == is.routeInternal.subset {
-		return false, true, nil
-	}
+	//subset, ok := is.routeInternal.determineNamespaceSubset(ns, gr)
+	//if !ok {
+	//	return true, false, nil
+	//}
+	//if subset == AllSubsetPublic || subset == is.routeInternal.subset {
+	//	return false, true, nil
+	//}
 
 	// TODO: how to route webhook request by object selector?
 
-	for _, e := range is.Endpoints {
-		if e.Subset == subset {
-			hosts = append(hosts, e.Ip)
-		}
-	}
+	//for _, e := range is.Endpoints {
+	//	if e.Subset == subset {
+	//		hosts = append(hosts, e.Ip)
+	//	}
+	//}
+	hosts = append(hosts, "127.0.0.1")
 	return false, false, hosts
 }
 
