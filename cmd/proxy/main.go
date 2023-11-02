@@ -39,7 +39,6 @@ import (
 
 	"github.com/openkruise/controllermesh/apis/ctrlmesh/constants"
 	"github.com/openkruise/controllermesh/client"
-	apiserverproxy "github.com/openkruise/controllermesh/proxy/apiserver"
 	"github.com/openkruise/controllermesh/proxy/metrics"
 	webhookproxy "github.com/openkruise/controllermesh/proxy/webhook"
 	"github.com/openkruise/controllermesh/util"
@@ -103,31 +102,30 @@ func main() {
 	}
 
 	// start apiserver proxy
-	{
-		opts := apiserverproxy.NewOptions()
-		opts.Config = rest.CopyConfig(cfg)
-		opts.SecureServingOptions.ServerCert.CertKey.KeyFile = "/var/run/secrets/kubernetes.io/serviceaccount/ctrlmesh/tls.key"
-		opts.SecureServingOptions.ServerCert.CertKey.CertFile = "/var/run/secrets/kubernetes.io/serviceaccount/ctrlmesh/tls.crt"
-		opts.SecureServingOptions.BindAddress = net.ParseIP("127.0.0.1")
-		opts.SecureServingOptions.BindPort = *proxyApiserverPort
-		opts.LeaderElectionName = *leaderElectionName
-		opts.UserAgentOverride = *userAgentOverride
-		//opts.SpecManager = proxyClient.GetSpecManager()
-		opts.SpecManager = nil
-		errs := opts.Validate()
-		if len(errs) > 0 {
-			klog.Fatalf("Failed to validate apiserver-proxy options %s: %v", util.DumpJSON(opts), errs)
-		}
-		proxy, err := apiserverproxy.NewProxy(opts)
-		if err != nil {
-			klog.Fatalf("Failed to new apiserver proxy: %v", err)
-		}
-
-		stoppedApiserver, err = proxy.Start(ctx)
-		if err != nil {
-			klog.Fatalf("Failed to start apiserver proxy: %v", err)
-		}
-	}
+	//{
+	//	opts := apiserverproxy.NewOptions()
+	//	opts.Config = rest.CopyConfig(cfg)
+	//	opts.SecureServingOptions.ServerCert.CertKey.KeyFile = "/var/run/secrets/kubernetes.io/serviceaccount/ctrlmesh/tls.key"
+	//	opts.SecureServingOptions.ServerCert.CertKey.CertFile = "/var/run/secrets/kubernetes.io/serviceaccount/ctrlmesh/tls.crt"
+	//	opts.SecureServingOptions.BindAddress = net.ParseIP("127.0.0.1")
+	//	opts.SecureServingOptions.BindPort = *proxyApiserverPort
+	//	opts.LeaderElectionName = *leaderElectionName
+	//	opts.UserAgentOverride = *userAgentOverride
+	//	opts.SpecManager = proxyClient.GetSpecManager()
+	//	errs := opts.Validate()
+	//	if len(errs) > 0 {
+	//		klog.Fatalf("Failed to validate apiserver-proxy options %s: %v", util.DumpJSON(opts), errs)
+	//	}
+	//	proxy, err := apiserverproxy.NewProxy(opts)
+	//	if err != nil {
+	//		klog.Fatalf("Failed to new apiserver proxy: %v", err)
+	//	}
+	//
+	//	stoppedApiserver, err = proxy.Start(ctx)
+	//	if err != nil {
+	//		klog.Fatalf("Failed to start apiserver proxy: %v", err)
+	//	}
+	//}
 
 	serveHTTP(ctx, readyHandler)
 	if stoppedWebhook != nil {
