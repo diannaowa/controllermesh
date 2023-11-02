@@ -74,7 +74,9 @@ func main() {
 	}
 
 	ctx := signals.SetupSignalHandler()
-	readyHandler := &healthz.Handler{}
+	readyHandler := &healthz.Handler{
+		Checks: make(map[string]healthz.Checker),
+	}
 	//proxyClient := protomanager.NewGrpcClient()
 	//if err := proxyClient.Start(ctx); err != nil {
 	//	klog.Fatalf("Failed to start proxy client: %v", err)
