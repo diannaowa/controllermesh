@@ -112,7 +112,8 @@ func main() {
 		opts.SecureServingOptions.BindPort = *proxyApiserverPort
 		opts.LeaderElectionName = *leaderElectionName
 		opts.UserAgentOverride = *userAgentOverride
-		opts.SpecManager = proxyClient.GetSpecManager()
+		//opts.SpecManager = proxyClient.GetSpecManager()
+		opts.SpecManager = nil
 		errs := opts.Validate()
 		if len(errs) > 0 {
 			klog.Fatalf("Failed to validate apiserver-proxy options %s: %v", util.DumpJSON(opts), errs)
