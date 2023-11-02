@@ -35,6 +35,8 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/healthz"
 	"sigs.k8s.io/controller-runtime/pkg/manager/signals"
 
+	"k8s.io/client-go/tools/clientcmd"
+
 	"github.com/openkruise/controllermesh/apis/ctrlmesh/constants"
 	"github.com/openkruise/controllermesh/client"
 	apiserverproxy "github.com/openkruise/controllermesh/proxy/apiserver"
@@ -60,12 +62,12 @@ func main() {
 	pflag.CommandLine.AddGoFlagSet(flag.CommandLine)
 	pflag.Parse()
 
-	if os.Getenv(constants.EnvPodNamespace) == "" || os.Getenv(constants.EnvPodName) == "" {
-		klog.Fatalf("Environment %s=%s %s=%s not exist.",
-			constants.EnvPodNamespace, os.Getenv(constants.EnvPodNamespace), constants.EnvPodName, os.Getenv(constants.EnvPodName))
-	}
-
-	cfg, err := getRestConfig()
+	//if os.Getenv(constants.EnvPodNamespace) == "" || os.Getenv(constants.EnvPodName) == "" {
+	//	klog.Fatalf("Environment %s=%s %s=%s not exist.",
+	//		constants.EnvPodNamespace, os.Getenv(constants.EnvPodNamespace), constants.EnvPodName, os.Getenv(constants.EnvPodName))
+	//}
+	cfg, err := clientcmd.BuildConfigFromFlags("", "/root/.kube/config")
+	//cfg, err := getRestConfig()
 	if err != nil {
 		klog.Fatalf("Failed to get rest config: %v", err)
 	}
