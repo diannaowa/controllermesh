@@ -21,6 +21,7 @@ import (
 	"net/http"
 
 	admissionv1 "k8s.io/api/admission/v1"
+	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/klog/v2"
 
 	"github.com/openkruise/controllermesh/proxy/protomanager"
@@ -51,15 +52,12 @@ type router struct {
 }
 
 func (r *router) Route(req *admissionv1.AdmissionRequest) (*Accept, *Redirect, *Ignore, *Error) {
-	//gr := schema.GroupResource{Group: req.Resource.Group, Resource: req.Resource.Resource}
+	gr := schema.GroupResource{Group: req.Resource.Group, Resource: req.Resource.Resource}
 
-	//protoSpec := r.specManager.AcquireSpec()
-	//defer r.specManager.ReleaseSpec(nil)
+	protoSpec := r.specManager.AcquireSpec()
+	defer r.specManager.ReleaseSpec(nil)
 	klog.Infof("Webhook route......%s/%s", req.Resource.Group, req.Resource.Resource)
-	//ignore, self, hosts := protoSpec.GetMatchedSubsetEndpoint(req.Namespace, gr)
-	var hosts []string
-	hosts = append(hosts, "127.0.0.1")
-	ignore, self := false, false
+	ignore, self, hosts := protoSpec.GetMatchedSubsetEndpoint(req.Namespace, gr)
 	if ignore {
 		return nil, nil, &Ignore{}, nil
 	}
