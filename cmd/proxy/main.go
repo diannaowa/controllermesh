@@ -40,6 +40,7 @@ import (
 	"github.com/openkruise/controllermesh/apis/ctrlmesh/constants"
 	"github.com/openkruise/controllermesh/client"
 	"github.com/openkruise/controllermesh/proxy/metrics"
+	"github.com/openkruise/controllermesh/proxy/protomanager"
 	webhookproxy "github.com/openkruise/controllermesh/proxy/webhook"
 	"github.com/openkruise/controllermesh/util"
 )
@@ -77,10 +78,10 @@ func main() {
 	readyHandler := &healthz.Handler{
 		Checks: make(map[string]healthz.Checker),
 	}
-	//proxyClient := protomanager.NewGrpcClient()
-	//if err := proxyClient.Start(ctx); err != nil {
-	//	klog.Fatalf("Failed to start proxy client: %v", err)
-	//}
+	proxyClient := protomanager.NewGrpcClient()
+	if err := proxyClient.Start(ctx); err != nil {
+		klog.Fatalf("Failed to start proxy client: %v", err)
+	}
 
 	var stoppedApiserver, stoppedWebhook <-chan struct{}
 
@@ -90,8 +91,7 @@ func main() {
 			CertDir:     *webhookCertDir,
 			BindPort:    *proxyWebhookPort,
 			WebhookPort: *webhookServePort,
-			//SpecManager: proxyClient.GetSpecManager(),
-			SpecManager: nil,
+			SpecManager: proxyClient.GetSpecManager(),
 		}
 		proxy := webhookproxy.NewProxy(opts)
 		readyHandler.Checks["webhookProxy"] = proxy.HealthFunc
